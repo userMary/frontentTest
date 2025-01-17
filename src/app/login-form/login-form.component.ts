@@ -1,40 +1,32 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { throwError, catchError, Observable, EMPTY } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { catchError, throwError } from 'rxjs';
-import { response } from 'express';
 import { RegistrationResponse } from '../definitions';
 import { Router } from '@angular/router';
 
-
 @Component({
-  selector: 'app-registration-form',
+  selector: 'app-login-form',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: './registration-form.component.html'
+  templateUrl: './login-form.component.html'
 })
-export class RegistrationFormComponent {
-
+export class LoginFormComponent {
   constructor(private http: HttpClient, private router: Router) {}
   public errors = {
-    Email: [],
-    Login: [],
-    BirthDay: [],
-    Password: []
+    Email: []
   }
 
   profileForm = new FormGroup({
     Email: new FormControl(''),
-    Login: new FormControl(''),
-    BirthDay: new FormControl(''),
-    Password: new FormControl(''),
-    ConfirmPassword: new FormControl('')
+    Password: new FormControl('')
   });
 
   private handleError(response: HttpErrorResponse) {
     if (response.status === 400) {
        this.errors = response.error.errors;
+       return EMPTY;
     }
     return throwError(() => response.error);
   }
@@ -45,11 +37,11 @@ export class RegistrationFormComponent {
 
   onSubmit(){
     this.http
-    .post<RegistrationResponse>(environment.API_URL + "/account/registration", this.profileForm.value)
+    .post<RegistrationResponse>(environment.API_URL + "/account/login", this.profileForm.value, {withCredentials: true})
     .pipe(catchError(this.handleError.bind(this)))
     .subscribe(res => {
       this.setSession(res);
       this.router.navigate([""]);
-    })
+  });
   }
 }

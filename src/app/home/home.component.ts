@@ -10,9 +10,8 @@ import { response } from 'express';
 
 @Component({
   selector: 'app-home',
-  imports: [ReactiveFormsModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  imports: [], // ReactiveFormsModule
+  templateUrl: './home.component.html'
 })
 export class HomeComponent {
 
@@ -57,6 +56,7 @@ export class HomeComponent {
     // });
     
     this.http.get<string>(environment.API_URL + "/home/test")
-    .subscribe(data => console.log(data)); 
+    .subscribe(data => console.log(data));
   }
+
 }
